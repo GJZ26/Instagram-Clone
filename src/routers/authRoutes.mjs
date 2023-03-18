@@ -1,0 +1,9 @@
+import express from 'express';
+import { login, signup } from '../services/authServices.mjs';
+
+const router = express.Router()
+
+router.post("/login", login);
+router.post("/signup", signup);
+
+export { router as authRouter }

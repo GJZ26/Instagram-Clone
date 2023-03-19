@@ -37,7 +37,8 @@ Accediendo con correo electrónico y usename.
     "password" : "PasdWd2!"
 }
 ```
-> Note: Aunque es la forma más recomendada en caso de no saber qué tipo de valor ingreso el usuario, el servidor tendrá preferencia buscando el valor como email.
+> **Note**
+> Aunque es la forma más recomendada en caso de no saber qué tipo de valor ingreso el usuario, el servidor tendrá preferencia buscando el valor como email.
 
 **Response**
 

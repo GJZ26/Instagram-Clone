@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import User from "../models/userModels.mjs";
+import { compare } from "../security/encryptor.mjs";
 
 export async function loginService(username, email = username, password) {
     const { count, rows } = await User.findAndCountAll({
@@ -21,19 +22,19 @@ export async function loginService(username, email = username, password) {
     }
 
 
-    if (rows[0].getDataValue("pwd") !== password) {
+    if (compare(password, rows[0].getDataValue("pwd"))) {
         return {
-            status: false,
+            status: true,
             data: {
-                message: "Las contraseñas no coinciden"
+                message: "Se ha podido autenticar con éxito!"
             }
         }
     }
 
     return {
-        status: true,
+        status: false,
         data: {
-            message: "Se ha podido autenticar con éxito!"
+            message: "Las contraseñas no coinciden"
         }
     }
 }

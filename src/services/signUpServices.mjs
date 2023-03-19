@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import User from "../models/userModels.mjs";
+import { encrypt } from "../security/encryptor.mjs";
 
 export async function signUpService(username, email, password) {
     const user = await User.count({
@@ -23,7 +24,7 @@ export async function signUpService(username, email, password) {
     const newuser = await User.create({
         username: username,
         email: email,
-        pwd: password
+        pwd: encrypt(password)
     })
 
     return {

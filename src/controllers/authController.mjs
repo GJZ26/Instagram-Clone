@@ -1,11 +1,11 @@
-import { signUp } from "../services/signUpServices.mjs";
+import { loginService, signUpService } from "../services/signUpServices.mjs";
 
 /**
  * 
  * @param {import("express").Request} req 
  * @param {import("express").Response} res 
  */
-export function login(req, res) {
+export async function login(req, res) {
     const { username, email, password } = req.body;
 
     if (username === undefined && email === undefined) {
@@ -25,6 +25,8 @@ export function login(req, res) {
             }
         })
     }
+
+    res.json(await loginService(username, email, password))
 }
 
 /**
@@ -35,7 +37,7 @@ export function login(req, res) {
 export async function signup(req, res) {
     const { username, email, password } = req.body
 
-    if (username === undefined || email.trim() === "") {
+    if (username === undefined) {
         res.json({
             status: false,
             data: {
@@ -45,7 +47,7 @@ export async function signup(req, res) {
         return;
     }
 
-    if (email === undefined || email.trim() === "") {
+    if (email === undefined) {
         res.json({
             status: false,
             data: {
@@ -55,7 +57,7 @@ export async function signup(req, res) {
         return;
     }
 
-    if (password === undefined || password.length < 8 || password.trim() === "") {
+    if (password === undefined || password.length < 8) {
         res.json({
             status: false,
             data: {
@@ -66,5 +68,5 @@ export async function signup(req, res) {
     }
 
 
-    res.json(await signUp(username.trim(), email.trim(), password.trim()))
+    res.json(await signUpService(username.trim(), email.trim(), password.trim()))
 }

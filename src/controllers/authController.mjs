@@ -1,4 +1,5 @@
-import { loginService, signUpService } from "../services/signUpServices.mjs";
+import { signUpService } from "../services/signUpServices.mjs";
+import { loginService } from "../services/loginServices.mjs";
 
 /**
  * 

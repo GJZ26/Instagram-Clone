@@ -17,7 +17,7 @@ export async function signUpService(username, email, password) {
         return {
             status: true,
             data: {
-                message: "Ya existe una cuenta con éste correo electrónico a email"
+                message: "Ya existe una cuenta con éste correo electrónico o username"
             }
         }
     }

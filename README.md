@@ -47,7 +47,7 @@ En caso de hacer faltar algún username y email.
 {
     "status": false,
         "data": {
-        "message": "No se puede acceder a una cuenta sin un email o username válido",
+        "message": "No se puede acceder a una cuenta sin un email o username válido"
     }
 }
 ```
@@ -88,7 +88,8 @@ En caso de autenticación exitosa.
 {
     "status": true,
         "data": {
-        "message": "Se ha podido autenticar con éxito!"
+        "message": "Se ha podido autenticar con éxito!",
+        "token":"JWTOKEN"
     }
 }
 ```
@@ -121,17 +122,27 @@ En caso de hacer faltar algún atributo necesario.
 {
     "status":false,
     "data":{
-        "message":"Mensaje indicando qué campo hizo falta"
+        "message":"No puedes crear una cuenta sin ..."
     }
 }
 ```
 
-En caso de haber un usuario con la misma información.
+En caso de haber proporcionado una contraseña demasiado corta.
 ```json
 {
     "status":false,
     "data":{
-        "message":"Mensaje indicando el email o username ya están siendo usado por otro usuario"
+        "message":"La contraseña debe tener al menos 8 carácteres de largo"
+    }
+}
+```
+
+En caso de haber un usuario con el mismo nombre de usuario o email.
+```json
+{
+    "status":false,
+    "data":{
+        "message":"Ya existe una cuenta con éste correo electrónico o username"
     }
 }
 ```
@@ -141,7 +152,8 @@ En caso de haber concluido el registro con éxito.
 {
     "status":false,
     "data":{
-        "message":"Mensaje indicando el registro exitoso"
+        "message":"Usuario creado con éxito",
+        "token":"JWTOKEN"
     }
 }
 ```

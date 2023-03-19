@@ -23,7 +23,7 @@ User.init({
     },
     profilePicture: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     }
 }, {
     tableName: "users",

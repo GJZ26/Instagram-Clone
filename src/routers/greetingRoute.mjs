@@ -1,5 +1,5 @@
 import express from 'express';
-import { sayHello } from '../services/greetingServices.mjs';
+import { sayHello } from '../controllers/greetingController.mjs';
 
 const router = express.Router();
 

@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import User from "../models/userModels.mjs";
 import { encrypt } from "../security/encryptor.mjs";
+import { createToken } from "../security/tokens.mjs";
 
 export async function signUpService(username, email, password) {
     const user = await User.count({
@@ -31,7 +32,7 @@ export async function signUpService(username, email, password) {
         status: true,
         data: {
             message: "Usuario creado con éxito",
-            username: newuser.username
+            token: createToken(newuser.getDataValue("id"), username)
         }
     };
 }

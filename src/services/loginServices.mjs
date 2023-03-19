@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import User from "../models/userModels.mjs";
 import { compare } from "../security/encryptor.mjs";
+import { createToken } from "../security/tokens.mjs";
 
 export async function loginService(username, email = username, password) {
     const { count, rows } = await User.findAndCountAll({
@@ -26,7 +27,8 @@ export async function loginService(username, email = username, password) {
         return {
             status: true,
             data: {
-                message: "Se ha podido autenticar con éxito!"
+                message: "Autenticación con éxito",
+                token:createToken(rows[0].getDataValue("id"),username)
             }
         }
     }

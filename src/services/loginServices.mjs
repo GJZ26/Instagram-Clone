@@ -28,7 +28,7 @@ export async function loginService(username, email = username, password) {
             status: true,
             data: {
                 message: "Autenticación con éxito",
-                token:createToken(rows[0].getDataValue("id"),username)
+                token:createToken(rows[0].getDataValue("id"),rows[0].getDataValue("username"))
             }
         }
     }

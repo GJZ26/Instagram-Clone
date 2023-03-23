@@ -33,7 +33,8 @@ export async function signUpService(username, email, password, name) {
         status: true,
         data: {
             message: "Usuario creado con éxito",
-            token: createToken(newuser.getDataValue("id"), username)
+            token: createToken(newuser.getDataValue("id"), username),
+            username: username
         }
     };
 }

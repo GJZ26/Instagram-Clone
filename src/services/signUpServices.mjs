@@ -3,7 +3,7 @@ import User from "../models/userModels.mjs";
 import { encrypt } from "../security/encryptor.mjs";
 import { createToken } from "../security/tokens.mjs";
 
-export async function signUpService(username, email, password) {
+export async function signUpService(username, email, password, name) {
     const user = await User.count({
         where: {
             [Op.or]: [
@@ -23,6 +23,7 @@ export async function signUpService(username, email, password) {
     }
 
     const newuser = await User.create({
+        name: name,
         username: username,
         email: email,
         pwd: encrypt(password)

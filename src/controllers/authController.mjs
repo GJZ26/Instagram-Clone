@@ -36,7 +36,19 @@ export async function login(req, res) {
  * @param {import("express").Response} res 
  */
 export async function signup(req, res) {
-    const { username, email, password } = req.body
+    const { username, email, password, name } = req.body
+
+    console.log(name)
+
+    if (name === undefined) {
+        res.json({
+            status: false,
+            data: {
+                message: "No se puede crear una cuenta sin un nombre"
+            }
+        })
+        return;
+    }
 
     if (username === undefined) {
         res.json({
@@ -68,6 +80,5 @@ export async function signup(req, res) {
         return;
     }
 
-
-    res.json(await signUpService(username.trim(), email.trim(), password.trim()))
+    res.json(await signUpService(username.trim(), email.trim(), password.trim(), name.trim()))
 }

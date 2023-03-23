@@ -105,6 +105,7 @@ En caso de autenticación exitosa.
 Registro de un nuevo usuario.
 ```json
 {
+    "name":"Jhon Cenna",
     "username":"CoolUser",
     "email":"coolme@mail.com",
     "password":"pAszW0rD%"
@@ -143,6 +144,16 @@ En caso de haber un usuario con el mismo nombre de usuario o email.
     "status":false,
     "data":{
         "message":"Ya existe una cuenta con éste correo electrónico o username"
+    }
+}
+```
+
+En caso de no asignar un nombre al momento del registro de la cuenta.
+```json
+{
+    "status":false,
+    "data":{
+        "message":"No se puede crear una cuenta sin un nombre"
     }
 }
 ```

@@ -38,24 +38,6 @@ export async function login(req, res) {
 export async function signup(req, res) {
     const { username, email, password, name, avatar=false } = req.body
 
-    var signatures = {
-        png: "image/png",
-        jpg: "image/jpg",
-        jpeg: "image/jpeg"
-      };
-      
-      /**
-       * 
-       * @param {String} b64 
-       */
-      function detectMimeType(b64) {
-        if(b64.includes(signatures.jpg)) return signatures.jpg
-        if(b64.includes(signatures.jpeg)) return signatures.jpeg
-        if(b64.includes(signatures.png)) return signatures.png
-      }
-
-    console.log(detectMimeType(avatar))
-
     if (name === undefined) {
         res.json({
             status: false,

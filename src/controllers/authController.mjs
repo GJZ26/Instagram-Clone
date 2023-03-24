@@ -36,7 +36,10 @@ export async function login(req, res) {
  * @param {import("express").Response} res 
  */
 export async function signup(req, res) {
-    const { username, email, password, name, avatar=false } = req.body
+    const { username, email, password, name} = req.body
+
+    console.log(req.avatar)
+    console.log(username)
 
     if (name === undefined) {
         res.json({

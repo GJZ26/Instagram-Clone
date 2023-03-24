@@ -2,7 +2,6 @@ import { Op } from "sequelize";
 import User from "../models/userModels.mjs";
 import { encrypt } from "../security/encryptor.mjs";
 import { createToken } from "../security/tokens.mjs";
-import { uploadFile } from "../aws/autenticacion.mjs";
 
 export async function signUpService(username, email, password, name, avatar) {
     const user = await User.count({
@@ -30,7 +29,7 @@ export async function signUpService(username, email, password, name, avatar) {
         pwd: encrypt(password)
     })
 
-    uploadFile (avatar)
+    //uploadFile (avatar)
 
     return {
         status: true,

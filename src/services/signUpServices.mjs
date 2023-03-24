@@ -3,7 +3,7 @@ import User from "../models/userModels.mjs";
 import { encrypt } from "../security/encryptor.mjs";
 import { createToken } from "../security/tokens.mjs";
 
-export async function signUpService(username, email, password, name) {
+export async function signUpService(username, email, password, name, avatar) {
     const user = await User.count({
         where: {
             [Op.or]: [

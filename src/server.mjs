@@ -14,8 +14,8 @@ const PORT = config.listen_port;
 
 const app = express();
 
-app.use(express.json());
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(express.json({limit: '25mb'}));
+app.use(bodyParser.urlencoded({extended:false,limit: '25mb'}));
 app.use(cors())
 
 app.use(greetingRouter);

@@ -36,9 +36,7 @@ export async function login(req, res) {
  * @param {import("express").Response} res 
  */
 export async function signup(req, res) {
-    const { username, email, password, name } = req.body
-
-    console.log(name)
+    const { username, email, password, name, avatar="Foto por defecto" } = req.body
 
     if (name === undefined) {
         res.json({
@@ -80,5 +78,5 @@ export async function signup(req, res) {
         return;
     }
 
-    res.json(await signUpService(username.trim(), email.trim(), password.trim(), name.trim()))
+    res.json(await signUpService(username.trim(), email.trim(), password.trim(), name.trim(),avatar))
 }

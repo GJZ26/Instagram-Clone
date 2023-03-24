@@ -13,7 +13,7 @@ const db = new Sequelize(DATABASE_NAME, DATABASE_USERNAME, DATABASE_PWD, {
     host: DATABASE_HOST,
     port: DATABASE_PORT,
     dialect: 'mysql',
-    logging: true
+    logging: false
 })
 
 try{

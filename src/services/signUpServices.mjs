@@ -36,7 +36,8 @@ export async function signUpService(username, email, password, name, avatarURI) 
         data: {
             message: "Usuario creado con éxito",
             token: createToken(newuser.getDataValue("id"), username),
-            username: username
+            username: username,
+            avatar: avatarURI
         }
     };
 }

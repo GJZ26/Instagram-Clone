@@ -1,6 +1,11 @@
 import { signUpService } from "../services/signUpServices.mjs";
 import { loginService } from "../services/loginServices.mjs";
 
+
+function pickRanProfilePicture(){
+    return `https://ig-clone-resources.s3.amazonaws.com/default/default-${Math.floor(Math.random() * (5 - 1 + 1) + 1)}.png`
+}
+
 /**
  * 
  * @param {import("express").Request} req 
@@ -37,7 +42,7 @@ export async function login(req, res) {
  */
 export async function signup(req, res, next) {
     const { username, email, password, name} = req.body
-    let AvatarURI = req.file.location || "Sin foto"
+    let AvatarURI = req.file ? req.file.location : pickRanProfilePicture()
 
     if (name === undefined) {
         res.json({

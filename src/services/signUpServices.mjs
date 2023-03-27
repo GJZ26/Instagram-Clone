@@ -3,7 +3,7 @@ import User from "../models/userModels.mjs";
 import { encrypt } from "../security/encryptor.mjs";
 import { createToken } from "../security/tokens.mjs";
 
-export async function signUpService(username, email, password, name, avatar) {
+export async function signUpService(username, email, password, name, avatarURI) {
     const user = await User.count({
         where: {
             [Op.or]: [
@@ -26,10 +26,10 @@ export async function signUpService(username, email, password, name, avatar) {
         name: name,
         username: username,
         email: email,
-        pwd: encrypt(password)
+        pwd: encrypt(password),
+        profilePicture: avatarURI
     })
 
-    //uploadFile (avatar)
 
     return {
         status: true,

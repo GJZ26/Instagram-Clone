@@ -35,11 +35,9 @@ export async function login(req, res) {
  * @param {import("express").Request} req 
  * @param {import("express").Response} res 
  */
-export async function signup(req, res) {
+export async function signup(req, res, next) {
     const { username, email, password, name} = req.body
-
-    console.log(req.avatar)
-    console.log(username)
+    let AvatarURI = req.file.location || "Sin foto"
 
     if (name === undefined) {
         res.json({
@@ -81,5 +79,5 @@ export async function signup(req, res) {
         return;
     }
 
-    res.json(await signUpService(username.trim(), email.trim(), password.trim(), name.trim(),avatar))
+    res.json(await signUpService(username.trim(), email.trim(), password.trim(), name.trim(), AvatarURI))
 }

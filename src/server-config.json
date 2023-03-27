@@ -1,3 +1,5 @@
 {
-    "listen_port":3030
+    "listen_rest_port": 3030,
+    "listen_provider_port": 3031,
+    "listen_consumer_port": 3032
 }

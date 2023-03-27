@@ -21,6 +21,7 @@ export async function login(req, res) {
                 message: "No se puede acceder a una cuenta sin un email o username válido",
             }
         })
+        return;
     }
 
     if (password === undefined) {
@@ -30,6 +31,7 @@ export async function login(req, res) {
                 message: "No se puede acceder a una cuenta sin contraseña"
             }
         })
+        return;
     }
 
     res.json(await loginService(username, email, password))

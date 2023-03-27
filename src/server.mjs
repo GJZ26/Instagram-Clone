@@ -10,7 +10,7 @@ import { authRouter } from "./routers/authRoutes.mjs";
 
 dotenv.config();
 
-const PORT = config.listen_port;
+const PORT = config.listen_rest_port;
 
 const app = express();
 

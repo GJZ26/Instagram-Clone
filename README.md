@@ -103,14 +103,20 @@ En caso de autenticación exitosa.
 **Request - Body**
 
 Registro de un nuevo usuario.
+
 ```json
 {
     "name":"Jhon Cenna",
     "username":"CoolUser",
     "email":"coolme@mail.com",
-    "password":"pAszW0rD%"
+    "password":"pAszW0rD%",
+    "avatar": [FILE]
 }
 ```
+> **Note**
+> Por favor mandarlo como multipart/formData
+>
+> En caso de no añadir alguna imágen en el parámetro "*Avatar*", el servidor asignará de manera aleatoria una foto de perfil por defecto de las 5 variantes existentes.
 
 Todos los campos son obligatorios.
 
@@ -163,8 +169,10 @@ En caso de haber concluido el registro con éxito.
 {
     "status":false,
     "data":{
-        "message":"Usuario creado con éxito",
-        "token":"JWTOKEN"
+        "message": "Usuario creado con éxito",
+        "token": "JWTTOKEN",
+        "username": "UserName",
+        "avatar": "ig-clone-s3.com/resource/pic.jpg"
     }
 }
 ```

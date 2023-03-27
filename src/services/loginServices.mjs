@@ -28,7 +28,8 @@ export async function loginService(username, email = username, password) {
             status: true,
             data: {
                 message: "Autenticación con éxito",
-                token: createToken(rows[0].getDataValue("id"), rows[0].getDataValue("username"),rows[0].getDataValue("profilePicture")),
+                token: createToken(rows[0].getDataValue("id"), rows[0].getDataValue("username"), rows[0].getDataValue("profilePicture")),
+                name: rows[0].getDataValue("name"),
                 username: rows[0].getDataValue("username"),
                 avatar: rows[0].getDataValue("profilePicture")
             }

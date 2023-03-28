@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import User from "../models/userModels.mjs";
 import { encrypt } from "../security/encryptor.mjs";
 import { createToken } from "../security/tokens.mjs";
+import { SNSsuscribe } from "./notificationServices.mjs";
 
 export async function signUpService(username, email, password, name, avatarURI) {
     const user = await User.count({
@@ -30,7 +31,7 @@ export async function signUpService(username, email, password, name, avatarURI) 
         profilePicture: avatarURI
     })
 
-
+    SNSsuscribe(email)
     return {
         status: true,
         data: {

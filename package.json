@@ -6,6 +6,7 @@
   "scripts": {
     "rest": "node ./src/server.mjs",
     "provider": "node ./src/provider.js",
+    "consumer":"node ./src/consumer.mjs",
     "dev": "npx nodemon src/server.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

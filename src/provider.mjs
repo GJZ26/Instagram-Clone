@@ -1,12 +1,17 @@
 import http from 'http';
 import express from 'express'
 import { Server } from 'socket.io';
-import dotev from 'dotenv'
 import amqp from 'amqplib/callback_api.js'
+import mongoose from 'mongoose';
+import dotenv from 'dotenv'
 
 import config from './server-config.json' assert {type: 'json'};
 import { readToken, verifyToken } from './security/tokens.mjs';
+import { getPosts } from './services/postServices.mjs';
 
+dotenv.config();
+
+const DB_URI = process.env["MONGODB_URI_DATABASE"];
 const port = config.listen_provider_port
 
 const app = express()
@@ -17,7 +22,12 @@ const io = new Server(server, {
     }
 });
 
-dotev.config()
+await mongoose.connect(DB_URI).then((v) => {
+    console.log("Conexión a la base de datos exitosa")
+}).catch((err) => {
+    console.log("Error en la conexión a la base de datos");
+    console.error(err)
+})
 
 
 io.on('connection', (socket) => {
@@ -84,10 +94,26 @@ io.on('connection', (socket) => {
                 })
             })
 
+            socket.on("GETALL", async (dat) => {
+                if (!verifyToken(dat.token)) {
+                    socket.emit("Log", {
+                        status: false,
+                        data: {
+                            message: "Token inválido"
+                        }
+                    })
+                    return;
+                }
+
+                const records = await getPosts();
+
+                socket.emit("POSTS", records)
+            })
+
             channel.consume(responseQueue, (message) => {
                 const data = JSON.parse(message.content.toString())
                 io.emit("Feed", data)
-            })
+            }, { noAck: true })
 
         })
     })

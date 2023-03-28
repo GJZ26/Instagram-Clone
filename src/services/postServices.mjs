@@ -35,25 +35,22 @@ export const savePost = async (username, name, avatar, media, caption) => {
 export const getPosts = async () => {
     let response;
 
-    await PostModel.find({}, (err, records) => {
-        if (err) {
-            response = {
-                status: false,
-                data: {
-                    errno: 4,
-                    message: "Ha ocurrido un error al momento de recuperar los datos de la base de datos"
-                }
+    await PostModel.find({}).then((v) => {
+        response = {
+            status: true,
+            data: {
+                message: "Lista de publicaciones recuperada",
+                records: v
             }
-        } else {
-            response = {
-                status: true,
-                data: {
-                    message: "Lista de publicaciones recuperada",
-                    records: records
-                }
+        }
+    }).catch((err) => {
+        response = {
+            status: false,
+            data: {
+                errno: 4,
+                message: "Ha ocurrido un error al momento de recuperar los datos de la base de datos"
             }
         }
     })
-
     return response
 }

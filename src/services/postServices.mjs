@@ -1,4 +1,5 @@
 import { PostModel } from "../models/postModel.mjs";
+import { sendNotification } from "./notificationServices.mjs";
 
 export const savePost = async (username, name, avatar, media, caption) => {
     const record = new PostModel();
@@ -29,6 +30,7 @@ export const savePost = async (username, name, avatar, media, caption) => {
         }
     })
 
+    sendNotification(`¡${username} acaba de publicar una nueva foto! Sé el primero en verla a través en Ig Clone`, `Nuevo post de ${username}`)
     return response
 }
 

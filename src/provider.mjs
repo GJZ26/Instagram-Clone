@@ -6,7 +6,6 @@ import amqp from 'amqplib/callback_api.js'
 
 import config from './server-config.json' assert {type: 'json'};
 import { readToken, verifyToken } from './security/tokens.mjs';
-import { connect } from 'http2';
 
 const port = config.listen_provider_port
 
@@ -37,50 +36,62 @@ io.on('connection', (socket) => {
                 return;
             }
 
-            const pushQueue = 'PUSH';
-            const pullQueue = 'PULL';
+            const requestQueue = 'PUSH';
+            const responseQueue = 'PULL';
 
-            channel.assertQueue(pushQueue);
-            channel.assertQueue(pullQueue)
+            channel.assertQueue(requestQueue);
+            channel.assertQueue(responseQueue)
 
-            
+            socket.on("POST", (dat) => {
+                if (!verifyToken(dat.token)) {
+                    socket.emit("Log", {
+                        status: false,
+                        data: {
+                            errno: 1,
+                            message: "Token inválido o expirado"
+                        }
+                    })
+                    return;
+                }
+
+                if (dat.media === undefined) {
+                    socket.emit("Log", {
+                        status: false,
+                        data: {
+                            errno: 2,
+                            message: "No se ha adjuntado imagen"
+                        }
+                    })
+                    return;
+                }
+
+                const tokenInfo = readToken(dat.token)
+
+                const postData = {
+                    username: tokenInfo.name,
+                    name: tokenInfo.owner,
+                    avatar: tokenInfo.avatar,
+                    media: dat.media,
+                    caption: dat.caption
+                }
+
+                channel.sendToQueue(requestQueue, Buffer.from(JSON.stringify(postData)))
+                io.to(socket.id).emit("Log", {
+                    status: true,
+                    data: {
+                        message: "Publicación añadida a cola con éxito"
+                    }
+                })
+            })
+
+            channel.consume(responseQueue, (message) => {
+                const data = JSON.parse(message.content.toString())
+                io.emit("Feed", data)
+            })
+
         })
     })
 
-    // socket.on("POST", (dat) => {
-    //     if (!verifyToken(dat.token)) {
-    //         socket.emit("Log", {
-    //             status: false,
-    //             data: {
-    //                 errno: 1,
-    //                 message: "Token inválido o expirado"
-    //             }
-    //         })
-    //         return;
-    //     }
-
-    //     if (dat.media === undefined) {
-    //         socket.emit("Log", {
-    //             status: false,
-    //             data: {
-    //                 errno: 2,
-    //                 message: "No se ha adjuntado imagen"
-    //             }
-    //         })
-    //         return;
-    //     }
-
-    //     const tokenInfo = readToken(dat.token)
-
-    //     const postData = {
-    //         author: tokenInfo.name,
-    //         avatar: tokenInfo.avatar,
-    //         date: new Date(),
-    //         media: dat.media,
-    //         caption: dat.caption
-    //     }
-    //     console.log(postData)
-    // })
 })
 
 io.on("POST", (dat) => {

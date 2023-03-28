@@ -38,7 +38,6 @@ amqp.connect('amqp://localhost', (err, conn) => {
         channel.consume(requestQueue, async (dat) => {
 
             const info = JSON.parse(dat.content.toString())
-            console.log(info)
 
             const imageURI = await uploadImage(info.media.data)
             const res = await savePost(info.username, info.name, info.avatar, imageURI, info.caption)

@@ -19,7 +19,7 @@ export const uploadAvatar = multer({
         s3: s3,
         bucket: BUCKET_NAME,
         key: function (req, file, cb) {
-            cb(null, Date.now().toString() + "-" + file.originalname);
+            cb(null,"avatars/"+ Date.now().toString() + "-" + file.originalname);
         },
         contentType: function (req, file, cb) {
             cb(null, file.mimetype)

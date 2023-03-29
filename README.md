@@ -1,3 +1,31 @@
+andresjuarez63
+#6765
+
+Adolfo Jrz — hoy a las 2:49
+mampito
+# Instagram Clone
+Instagram Clone es un backend multi-servicio para un proyecto que pretende **imitar** las funcionalidades de Instagram.
+
+El proyecto consta de **3 servicios** que se ejecutan de manera simultánea para que pueda realizar peticiones de forma segura y rápida.
+
+Para este proyecto, empleamos tanto base de datos relacionales (*MySQL*) y no relacionales (*MongoDB*).
+Expandir
+message.txt
+18 KB
+copia eso en el README.md
+o sea, elimina lo que hay, y pega eso
+Imagen
+esa imagen lo vas a meter en una carpeta que se llame doc-img
+a la altura del README
+Adolfo Jrz — hoy a las 2:53
+Abres la imagen en navegador y lo descargas desde ahí pa que no valga pito la calidad
+Adolfo Jrz — hoy a las 2:53
+Te debe de quedar algo así
+Imagen
+y ps ya
+le das push
+﻿
+Adolfo Jrz#3736
 # Instagram Clone
 Instagram Clone es un backend multi-servicio para un proyecto que pretende **imitar** las funcionalidades de Instagram.
 
@@ -14,8 +42,12 @@ Para este proyecto, empleamos tanto base de datos relacionales (*MySQL*) y no re
   - [Softwares](#softwares)
   - [Servicios](#servicios)
 - [Instalación](#instalación)
+- [Arquitectura](#arquitectura)
+  - [REST](#rest)
+  - [Provider](#provider)
+  - [Consumer](#consumer)
 - [Lista de servicios](#lista-de-servicios)
-- [Consumer - REST](#consumer---rest)
+- [API - REST](#api---rest)
   - [Endpoints](#endpoints)
   - [**Login**](#login)
     - [**Request** - Body/JSON](#request---bodyjson)
@@ -122,14 +154,56 @@ npm run consumer & # Sigue ejecutándose aunque hayas finalizado la terminal
 
 Y listo! tienes el backend de Ig Clone funcionando de forma correcta, aprende cómo realizar consultas en la siguiente sección
 
-<!-- -------------
-# Arquitectura -->
+-------------
+# Arquitectura
+
+Los servicios de Instagram Clone están diseñados y pensados para funcionar de una forma confiable, eficaz y constante.
+
+Este proyecto cuenta con tres servicios que trabajan en conjunto: **Rest**, **Consumer** y **Provider**.
+
+Estos servicios se distribuyen el trabajo de almacenamiento de datos, gestion de solicitudes y envío de notificaciones, en conjunto con servicios a terceros.
+
+A continuación una representación del cómo nuestros servicios se comunican entre sí y su ruta de trabajo.
+
+![Arquitectura de IG Clone](doc-img/ProjectSchema.png)
+
+Cada servicio tiene un fin en específico:
+
+## REST
+REST es un servicio que levanta un endpoint para realizar peticiones HTTP.
+
+Este servicio se ejecuta de forma indendiente y aislada de los demás servicio. Su funcionalidad principal es recibir peticiones de registro de usuarios, y autenticación.
+
+Para las peticiones de **registro**, el servicio recibe los datos, los verifica, sube contenido a los servicios de S3 (en caso de ser necesario), y almacena los registros dentro una base de datos relaciona MySQL, donde almacena información como: nombre, nombre de usuario, foto de perfil y contraseña.
+
+Implementa módulos de seguridad para encriptar las contraseñas y entregar y firmar tokens de autenticación para futuras peticiones.
+
+Para las peticiones de **ingreso**, el servicio consulta las credenciales entregadas con los registros de los usuarios actuales de la base de datos, y al igual que el servicio de registro, provee de tokens de autenticación firmadas para realizar peticiones, e información adicional que puede ser de utilidad al momento de renderizar contenido relacionado al usuario.
+
+Este servicio, al no ser un trabajo de concurrencia alta, hemos decidido no implementar un broker para gestionar las solicitudes.
+
+## Provider
+Este servicio acepta eventos a través eventos, lo que permite a los clientes enviar datos en tiempo real desde sus aplicaciones web.
+
+Los dos eventos que recibe son `GETALL`, y `POST`, los cuales sirven para crear publicaciones y recuperar todas las publicaciones almacenada en la base de datos respectivamente.
+
+Una vez recibido el evento, el servicio se encarga de validar su contenido. Para esto, el servicio utiliza una serie de reglas y validaciones predefinidas para asegurarse de que el evento sea correcto y cumpla con los requisitos necesarios para ser procesado por el sistema.
+
+Si el evento es válido, el servicio lo añade a la cola de **Rabbit MQ** (únicamente en los eventos de tipo `POST`), utilizando el puerto por defecto del sistema. La cola de Rabbit MQ permite que el evento sea almacenado temporalmente y procesado posteriormente por otros sistemas o aplicaciones.
+
+Este servicio proporciona una solución robusta y escalable para el procesamiento de eventos en tiempo real. La validación de eventos garantiza que solo los datos correctos y precisos sean procesados, lo que aumenta la calidad y confiabilidad de los datos de salida. Además, la capacidad de almacenamiento temporal de la cola de Rabbit MQ permite que el sistema sea más tolerante a fallos y pueda manejar picos de trásito.
+
+## Consumer
+
+Consumer es un servicio eficiente que permite consumir eventos de una cola de RabbitMQ llamada "request". Su principal función es automatizar el proceso de almacenamiento del contenido de las publicación realizada en un bucket de S3 de AWS, guardar el resto dela información, como `Descripción`, `Autor`, etcétera; en un documento de una base de datos no relacional (*MongoDB*), envía notificaciones por el servicio SNS de AWS a todos los usuarios, para notificar que hay nuevo contenido y agrega un evento a la cola "response" de RabbitMQ con la información que se almaceno en la base de datos de MongoDB y el URI del objeto que se subió a S3, que después será emitida en forma de broadcast por el servicio `provider`.
+
+De este modo, tenemos este proceso de almacenamiento de datos de forma fiable, y al alcance de todos los usuarios, gracias a los eventos que permiten enviar dichos registros a todos los usuarios en tiempo real.
 
 -------------
 # Lista de servicios
 En esta sección encontrarás qué hace cada servicio y como realizar peticiones de forma correcta.
 
-# Consumer - REST
+# API - REST
 * Descripción: Este es el servicio REST para realizar peticiones de autenticación, como inicio de sesión y registro de nuevos usuarios.
 * Puerto por defecto: **3030**
 
@@ -454,3 +528,4 @@ Este evento se ejecuta cuando ocurre un error antes tratando algún evento que e
 + *errno* **2**: Tu emision `POST` no contiene ninguna imagen en su data.
 + *errno* **3**: Ha ocurrido un error durante el almacenamiento de tu publicación dentro de la base de datos no relacional.
 + *errno* **4**: No se ha podido recuperar las publicaciones almacenadas en la base de datos.
+

@@ -1,31 +1,9 @@
-andresjuarez63
-#6765
-
-Adolfo Jrz — hoy a las 2:49
-mampito
 # Instagram Clone
 Instagram Clone es un backend multi-servicio para un proyecto que pretende **imitar** las funcionalidades de Instagram.
 
 El proyecto consta de **3 servicios** que se ejecutan de manera simultánea para que pueda realizar peticiones de forma segura y rápida.
 
 Para este proyecto, empleamos tanto base de datos relacionales (*MySQL*) y no relacionales (*MongoDB*).
-Expandir
-message.txt
-18 KB
-copia eso en el README.md
-o sea, elimina lo que hay, y pega eso
-Imagen
-esa imagen lo vas a meter en una carpeta que se llame doc-img
-a la altura del README
-Adolfo Jrz — hoy a las 2:53
-Abres la imagen en navegador y lo descargas desde ahí pa que no valga pito la calidad
-Adolfo Jrz — hoy a las 2:53
-Te debe de quedar algo así
-Imagen
-y ps ya
-le das push
-﻿
-Adolfo Jrz#3736
 # Instagram Clone
 Instagram Clone es un backend multi-servicio para un proyecto que pretende **imitar** las funcionalidades de Instagram.
 

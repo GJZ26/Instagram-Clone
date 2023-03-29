@@ -1,20 +1,138 @@
 # Instagram Clone
-Servicios de lado del servidor para un clon de instagram.
+Instagram Clone es un backend multi-servicio para un proyecto que pretende **imitar** las funcionalidades de Instagram.
+
+El proyecta consta de **3 servicios** que se ejecutan de manera simultánea para que pueda realizar peticiones de forma segura y rápida.
+
+Para este proyecto, empleamos tanto base de datos relacionales (*MySQL*) y no relacionales (*MongoDB*).
+
+# Contenido
+- [Instagram Clone](#instagram-clone)
+- [Contenido](#contenido)
+- [Requisitos](#requisitos)
+  - [Runtime](#runtime)
+  - [Base de datos](#base-de-datos)
+  - [Softwares](#softwares)
+  - [Servicios](#servicios)
+- [Instalación](#instalación)
+- [Lista de servicios](#lista-de-servicios)
+- [Consumer - REST](#consumer---rest)
+  - [Endpoints](#endpoints)
+  - [**Login**](#login)
+    - [**Request** - Body/JSON](#request---bodyjson)
+    - [**Response** - JSON](#response---json)
+  - [**Sign Up**](#sign-up)
+    - [**Request** - Body/Multipart-Form](#request---bodymultipart-form)
+    - [**Response** - JSON](#response---json-1)
+
+# Requisitos
+Instagram Clone utiliza algunos servicios y software de tercero para su funcionamiento. Esta es una lista de software y herramientas necesarias para que el programa funcione de forma óptima:
+
+## Runtime
+* **NodeJS** v18 LTS: Entorno en tiempo de ejecución multiplataforma para Javascript, necesaria para la ejecución del proyecto.
+* **Docker**: Entorno de ejecución para contenedores, indispensable para la ejecución de algunos servicios de terceros.
+
+## Base de datos
+* **MySQL**: Sistema de gestión de bases de datos relacional, necesaria para almacenar registro de usuarios.
+* **MongoDB**: Sistema de gestión de base de datos no relacionales, necesaria para almecenar registros de las publicaciones de los usuarios.
+
+> **Note**
+> Estos sistemas son necesarias en caso de ejecutar el programa de forma local.
+
+## Softwares
+* **RabbitMQ**: Software de negociación de mensajes, usado para administrar los eventos dentro del programa.
+
+## Servicios
+* **AWS S3**: Servicio de almacenamiento de objetos, necesario para imágenes de las cuentas y publicaciones.
+* **AWS SNS**: Servicio de publicación-suscripción, usado en las notificaciones vía e-mail de los eventos.
+* **AWS RDS**: Bases de datos relacionales administrado por AWS, necesaria para almacenar registro de usuarios.
+* **MongoDB Atlas**: Sistema de gestión de base de datos no relacionales, necesaria para almecenar registros de las publicaciones de los usuarios.
 
 # Instalación
-Instala las dependencias con `npm install`.
+Una vez cumplido los requisitos, clonaremos el repositorio con el comando: 
+```bash
+git clone https://github.com/GJZ26/Instagram-Clone.git
+```
+Accederemos a la carpeta del proyecto, y una vez dentro instalaremos las dependencias necesarias con el siguiente comando:
+```bash
+npm install
+```
+Antes de ejecutar los servicios, debemos configurar nuestras credenciales en variable de entorno. Para ello, modificaremos el archivo `.env.example` de la carpeta raíz y completaremos los datos como lo indica el archivo.
+```env
+DATABASE_NAME = "Nombre de tu base de datos relacional, creada previamente"
+DATABASE_HOST = "Host de tu base de datos relacional, DNS, IP o Localhost si en entorno local"
+DATABASE_PORT = 3306
 
-Una vez instalado, ejecuta `npm start`, por defecto el programa se ejecutará en el puerto 3030, puedes cambiar la configuración desde el archivo *server-config.json* dentro del directorio *src/*.
+DATABASE_USER = "Usuario para acceder a la base de datos relacional"
+DATABASE_PASSWORD = "Contraseña del usuario para acceder a la base de datos relacional"
 
-# Endpoints
+MONGODB_URI_DATABASE = "Tu base de datos MongoDB"
 
-## **Login** 
-**URL**
+SECRET = "Secreto para encriptar los tokens de autenticación de los usuarios"
 
-`http://localhost:3030/auth/login`
+AWS_REGION = "Region AWS, por ejemplo us-east-1 "
+AWS_ACCESS_KEY = "Clave de acceso de tu usuario con los permisos para S3 y SNS"
+AWS_SECRET_KEY = "Clave secreta de tu usuario con los permisos para S3 y SNS"
+TOPIC_ARN = "El arn de tu topic de SNS"
 
-**Request - Body**
+BUCKET_NAME = "S3 bucket name"
+```
 
+Una vez guardado los cambios, renombraremos el archivo `.env.example` y asignaremos el nombre `.env`
+
+Ahora arrancaremos nuestro contenedor de RabbitMQ. Para ello, ejecutaremos el siguiente comando para tener la versión más actualizada de la imagen de RabbitMQ.
+
+```bash
+docker pull rabbitmq
+```
+
+Y arrancaremos un nuevo contenedor con el puerto 5672 a la escucha en nuestro dispositivo físico con 
+```bash
+docker run -itd --hostname rabbitmq --name rabbitmq -p 5672:5672 rabbitmq:latest
+```
+
+Ahora estamos listos para arrancar nuestro servicios. Estando dentro de nuestra carpeta del proyecto, al mismo nivel de este archivo, ejecutaremos alguno de los siguientes comandos para habilitar nuestra API REST.
+```bash
+npm run rest # Finaliza cuando cierres la terminal
+# ó
+npm run rest & # Sigue ejecutándose aunque hayas finalizado la terminal
+```
+
+Luego lanzaremos nuestro event provider con alguno de los siguientes comandos:
+```bash
+npm run provider # Finaliza cuando cierres la terminal
+# ó
+npm run provider & # Sigue ejecutándose aunque hayas finalizado la terminal
+```
+
+Y finalmente, ejecutaremos nuestro event consumer con el comando:
+```bash
+npm run consumer # Finaliza cuando cierres la terminal
+# ó
+npm run consumer & # Sigue ejecutándose aunque hayas finalizado la terminal
+```
+
+Y listo! tienes el backend de Ig Clone funcionando de forma correcta, aprende cómo realizar consultas en la siguiente sección
+
+<!-- -------------
+# Arquitectura -->
+
+-------------
+# Lista de servicios
+En esta sección encontrarás qué hace cada servicio y como realizar peticiones de forma correcta.
+
+# Consumer - REST
+* Descripción: Este es el servicio REST para realizar peticiones de autenticación, como inicio de sesión y registro de nuevos usuarios.
+* Puerto por defecto: **3030**
+
+## Endpoints
+## **Login**
+- Descripción: Autenticación de usuario para obtención de token de autenticación.
+
+- URI: http://127.0.0.1:3030/auth/login
+
+- Método: **POST**
+
+### **Request** - Body/JSON
 Accediendo con nombre de usuario.
 ```json
 {
@@ -29,6 +147,11 @@ Accediendo con correo electrónico.
     "password" : "PasdWd2!"
 }
 ```
+
+> **Note**
+> En caso de no saber si lo que ingresó el usuario corresponde a un correo o un email, es posible mandar cualquiera de los datos de esta forma, y el servidor retornará un token en caso de que coincida el input como email o usernaeme.
+
+
 Accediendo con correo electrónico y usename.
 ```json
 {
@@ -37,16 +160,14 @@ Accediendo con correo electrónico y usename.
     "password" : "PasdWd2!"
 }
 ```
-> **Note**
-> Aunque es la forma más recomendada en caso de no saber qué tipo de valor ingreso el usuario, el servidor tendrá preferencia buscando el valor como email.
 
-**Response**
+### **Response** - JSON
 
 En caso de hacer faltar algún username y email.
 ```json
 {
     "status": false,
-        "data": {
+    "data": {
         "message": "No se puede acceder a una cuenta sin un email o username válido"
     }
 }
@@ -56,7 +177,7 @@ En caso de no propocionar una contraseñas correctas.
 ```json
 {
     "status": false,
-        "data": {
+    "data": {
         "message": "No se puede acceder a una cuenta sin contraseña"
     }
 }
@@ -77,7 +198,7 @@ En caso de no haber coincidencia de algún registro con el username o email prop
 ```json
 {
     "status": false,
-        "data": {
+    "data": {
         "message": "No hemos podido encontrar usuarios con el username o email proporcionado..."
     }
 }
@@ -87,44 +208,53 @@ En caso de autenticación exitosa.
 ```json
 {
     "status": true,
-        "data": {
+    "data": {
         "message": "Se ha podido autenticar con éxito!",
-        "token":"JWTOKEN"
+        "token":"JWTOKEN",
+        "name":"An Named User",
+        "username":"CoolUser",
+        "avatar":"uri://to.avatar.user/content.jpg"
     }
 }
 ```
+## **Sign Up**
+- Descripción: Registro de un nuevo usuario a la aplicación.
 
-## **Signup**
+- URI: http://127.0.0.1:3030/auth/signup
 
-**URL**
+- Método: **POST**
 
-`http://localhost:3030/auth/signup`
+### **Request** - Body/Multipart-Form
 
-**Request - Body**
+Registrando un nuevo usuario sin avatar.
 
-Registro de un nuevo usuario.
+| Clave    | Valor              |
+| -------- | ------------------ |
+| username | coolUser           |
+| name     | An Named Cool User |
+| email    | sample@mail.com    |
+| password | PasdWd2!           |
 
-```json
-{
-    "name":"Jhon Cenna",
-    "username":"CoolUser",
-    "email":"coolme@mail.com",
-    "password":"pAszW0rD%",
-    "avatar": [FILE]
-}
-```
 > **Note**
-> Por favor mandarlo como multipart/formData
->
-> En caso de no añadir alguna imágen en el parámetro "*Avatar*", el servidor asignará de manera aleatoria una foto de perfil por defecto de las 5 variantes existentes.
+>  En este opción de registro, donde el usuario no asigna ninguna fotografía de perfil, el servidor de asignará de forma automática y aleatoria una foto de perfil por defecto.
 
-Todos los campos son obligatorios.
+Registrandeo un nuevo usuario con avatar.
 
-Para el campo *Password* es necesario ingresar un texto de al menos 8 carácteres de longitud.
+| Clave    | Valor              |
+| -------- | ------------------ |
+| username | coolUser           |
+| name     | An Named Cool User |
+| email    | sample@mail.com    |
+| password | PasdWd2!           |
+| avatar   | < Array Buffer>    |
 
-**Response**
+Todos los campos son obligatorios, a excepción de `avatar`.
 
-En caso de hacer faltar algún atributo necesario.
+El campo `password` debe tener contener un String de igual o mayor longitud de 8 caráteres.
+
+### **Response** - JSON
+
+En caso de hacer faltar algún atributo obligatorio.
 ```json
 {
     "status":false,
@@ -154,25 +284,16 @@ En caso de haber un usuario con el mismo nombre de usuario o email.
 }
 ```
 
-En caso de no asignar un nombre al momento del registro de la cuenta.
-```json
-{
-    "status":false,
-    "data":{
-        "message":"No se puede crear una cuenta sin un nombre"
-    }
-}
-```
-
 En caso de haber concluido el registro con éxito.
 ```json
 {
-    "status":false,
+    "status":true,
     "data":{
-        "message": "Usuario creado con éxito",
-        "token": "JWTTOKEN",
-        "username": "UserName",
-        "avatar": "ig-clone-s3.com/resource/pic.jpg"
+        "message": "Se ha podido autenticar con éxito!",
+        "token":"JWTOKEN",
+        "name":"An Named User",
+        "username":"CoolUser",
+        "avatar":"uri://to.avatar.user/content.jpg"
     }
 }
 ```

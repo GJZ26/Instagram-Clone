@@ -1,7 +1,7 @@
 # Instagram Clone
 Instagram Clone es un backend multi-servicio para un proyecto que pretende **imitar** las funcionalidades de Instagram.
 
-El proyecta consta de **3 servicios** que se ejecutan de manera simultánea para que pueda realizar peticiones de forma segura y rápida.
+El proyecto consta de **3 servicios** que se ejecutan de manera simultánea para que pueda realizar peticiones de forma segura y rápida.
 
 Para este proyecto, empleamos tanto base de datos relacionales (*MySQL*) y no relacionales (*MongoDB*).
 
@@ -28,7 +28,7 @@ Para este proyecto, empleamos tanto base de datos relacionales (*MySQL*) y no re
     - [POST](#post)
     - [GETALL](#getall)
   - [Recepciones](#recepciones)
-    - [POSTS](#posts)
+    - [Posts](#posts)
     - [Feed](#feed)
     - [Log](#log)
   - [Errno Definiciones](#errno-definiciones)
@@ -338,7 +338,28 @@ io.emit("GETALL", params)
 ## Recepciones
 Eventos que el cliente **recibe** del servidor.
 
-### POSTS
+Algunos eventos retornan objectos de tipo Post o Array de éstos mismos, este es un ejemplo de un Objeto Post:
+
+```json
+{ // ObjectPost Example
+  "_id": {
+    "$oid": "642253241b08aa4a00b5d2b1"
+  },
+  "date": {
+    "$date": {
+      "$numberLong": "1679970773963"
+    }
+  },
+  "username": "CoolUser",
+  "name": "A Named Cool User",
+  "avatar": "uri://to.avatar.user/picture.jpg",
+  "media": "uri://to.post.media/picture.jpg",
+  "caption": "",
+  "__v": 0
+}
+```
+
+### Posts
 Todas las publicaciones de la base de datos, respuesta de la emisión `GETALL`.
 ```json
 {
@@ -348,9 +369,11 @@ Todas las publicaciones de la base de datos, respuesta de la emisión `GETALL`.
             "records": <Array Posts>
         }
 }
+```
 
-// ó en caso de error
+ó en caso de error
 
+```json
 {
     "status": false,
     "data": {
@@ -371,9 +394,11 @@ Este evento se emite una vez el evento `POST` haya sido compleatada con éxito s
         "attribute": <ObjectPost>
     }
 }
+```
 
-// ó en caso de error
+ ó en caso de error
 
+```json
 {
     "response" : {
         "status": false,

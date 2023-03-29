@@ -107,7 +107,7 @@ io.on('connection', (socket) => {
 
                 const records = await getPosts();
 
-                socket.emit("POSTS", records)
+                socket.emit("Posts", records)
             })
 
             channel.consume(responseQueue, (message) => {

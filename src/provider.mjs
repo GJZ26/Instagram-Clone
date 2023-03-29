@@ -120,10 +120,6 @@ io.on('connection', (socket) => {
 
 })
 
-io.on("POST", (dat) => {
-    console.log(dat)
-})
-
 server.listen(port, () => {
     console.log(`Server listening on port ${port}`)
 })

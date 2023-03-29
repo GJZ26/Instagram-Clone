@@ -23,6 +23,15 @@ Para este proyecto, empleamos tanto base de datos relacionales (*MySQL*) y no re
   - [**Sign Up**](#sign-up)
     - [**Request** - Body/Multipart-Form](#request---bodymultipart-form)
     - [**Response** - JSON](#response---json-1)
+- [Provider - WEB SOCKET](#provider---web-socket)
+  - [Emisiones](#emisiones)
+    - [POST](#post)
+    - [GETALL](#getall)
+  - [Recepciones](#recepciones)
+    - [POSTS](#posts)
+    - [Feed](#feed)
+    - [Log](#log)
+  - [Errno Definiciones](#errno-definiciones)
 
 # Requisitos
 Instagram Clone utiliza algunos servicios y software de tercero para su funcionamiento. Esta es una lista de software y herramientas necesarias para que el programa funcione de forma óptima:
@@ -236,9 +245,9 @@ Registrando un nuevo usuario sin avatar.
 | password | PasdWd2!           |
 
 > **Note**
->  En este opción de registro, donde el usuario no asigna ninguna fotografía de perfil, el servidor de asignará de forma automática y aleatoria una foto de perfil por defecto.
+>  En esta opción de registro, donde el usuario no asigna ninguna fotografía de perfil, el servidor le asignará de forma automática y aleatoria una foto de perfil por defecto.
 
-Registrandeo un nuevo usuario con avatar.
+Registrando un nuevo usuario con avatar.
 
 | Clave    | Valor              |
 | -------- | ------------------ |
@@ -297,3 +306,114 @@ En caso de haber concluido el registro con éxito.
     }
 }
 ```
+# Provider - WEB SOCKET
+* Descripción: Eventos de publicaciones y recepción de publicaciones nuevas por otros usuarios.
+* Puerto de escucha: **3031**
+
+## Emisiones
+Eventos que el cliente **envía** al servidor
+
+### POST
+Evento para subir una nueva publicación.
+```javascript
+const params = {
+    caption:"Descripción de tu publicación - opcional",
+    token:"Token de autenticación del usuario - obligatorio",
+    media: <FileObject> // Obligatorio
+}
+
+io.emit("POST", params)
+```
+
+### GETALL
+Evento para solicitar todos las publicaciones de la base de datos.
+```javascript
+const params = {
+    token:"Token de autenticación del usuario - obligatorio"
+}
+
+io.emit("GETALL", params)
+```
+
+## Recepciones
+Eventos que el cliente **recibe** del servidor.
+
+### POSTS
+Todas las publicaciones de la base de datos, respuesta de la emisión `GETALL`.
+```json
+{
+    "status": true,
+        "data": {
+            "message": "Lista de publicaciones recuperada",
+            "records": <Array Posts>
+        }
+}
+
+// ó en caso de error
+
+{
+    "status": false,
+    "data": {
+        "errno": 4,
+        "message": "Ha ocurrido un error al momento de recuperar los datos de la base de datos"
+    }
+}
+```
+
+### Feed
+Este evento se emite una vez el evento `POST` haya sido compleatada con éxito se emite a TODOS los clientes conectados al servidor.
+
+```json
+{
+    "status": false,
+    "data": {
+        "message": "Nueva publicación",
+        "attribute": <ObjectPost>
+    }
+}
+
+// ó en caso de error
+
+{
+    "response" : {
+        "status": false,
+        "data": {
+            "errno": 3,
+            "message": "No se ha podido completar el registro a la base de datos",
+            "datails": <ObjectError>
+        }
+    }
+}
+```
+
+### Log
+Este evento se ejecuta cuando ocurre un error antes tratando algún evento que enviaste. Los eventos que provoquen ésta emision, no llegan a ser añadido a la cola del broker.
+
+
++ En caso de que hayas emitido algún evento con un token inválido o expirado.
+```json
+{
+    "status": false,
+    "data": {
+        "errno": 1,
+        "message": "Token inválido o expirado"
+    }
+}
+```
+
++ En caso de emitir un evento `POST` sin imagen
+```json
+{
+    "status": false,
+    "data": {
+        "errno": 2,
+        "message": "No se ha adjuntado imagen"
+    }
+}
+```
+
+## Errno Definiciones
++ *errno* **1**: El token de tu último evento emitido ha expirado, está corrupto o ha expirado.
++ *errno* **2**: Tu emision `POST` no contiene ninguna imagen en su data.
++ *errno* **3**: Ha ocurrido un error durante el almacenamiento de tu publicación dentro de la base de datos no relacional.
++ *errno* **4**: No se ha podido recuperar las publicaciones almacenadas en la base de datos.

@@ -411,6 +411,18 @@ Este evento se emite una vez el evento `POST` haya sido compleatada con éxito s
 }
 ```
 
+ó
+
+```json
+{
+    "status": false,
+    "data": {
+        "errno": 2,
+        "message": "No se ha adjuntado imagen"
+    }
+}
+```
+
 ### Log
 Este evento se ejecuta cuando ocurre un error antes tratando algún evento que enviaste. Los eventos que provoquen ésta emision, no llegan a ser añadido a la cola del broker.
 

@@ -39,6 +39,16 @@ amqp.connect('amqp://localhost', (err, conn) => {
 
             const info = JSON.parse(dat.content.toString())
 
+            if (!info.media.data) {
+                channel.sendToQueue(responseQueue, Buffer.from(JSON.stringify({
+                    status: false,
+                    data: {
+                        errno: 2,
+                        message: "No se ha adjuntado imagen"
+                    }
+                })))
+            }
+
             const imageURI = await uploadImage(info.media.data)
             const res = await savePost(info.username, info.name, info.avatar, imageURI, info.caption)
 
